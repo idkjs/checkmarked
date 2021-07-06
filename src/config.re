@@ -1,0 +1,46 @@
+let filename = "checkmarked.config.json";
+
+type task = {command: string}
+and task_spec = {
+  name: string,
+  arguments: option(string),
+}
+and rule = {
+  tasks: list(task_spec),
+  extension: option(string),
+}
+and config = {
+  tasks: Js.Dict.t(task),
+  sources: list(string),
+  rules: Js.Dict.t(rule),
+};
+
+module Decode = {
+  let task = json => Json.Decode.{command: json |> field("command", string)};
+
+  let task_spec = json =>
+    Json.Decode.{
+      name: json |> field("name", string),
+      arguments: json |> optional(field("arguments", string)),
+    };
+
+  let string_to_task_spec = json =>
+    Json.Decode.{name: json |> string, arguments: None};
+
+  let rule = json =>
+    Json.Decode.{
+      tasks:
+        json |> field("tasks", list(either(task_spec, string_to_task_spec))),
+      extension: json |> optional(field("extension", string)),
+    };
+
+  let config = json =>
+    Json.Decode.{
+      tasks: json |> field("tasks", dict(task)),
+      sources: json |> field("sources", list(string)),
+      rules: json |> field("rules", dict(rule)),
+    };
+};
+
+let read = () =>
+  Node.Fs.readFileAsUtf8Sync(filename) |> Js.Json.parseExn |> Decode.config;

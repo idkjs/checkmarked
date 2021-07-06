@@ -1,4 +1,6 @@
-let extract : string -> (string * string) array = [%raw {|
+let extract: string => array((string, string)) = (
+  [%raw
+    {|
   function (text) {
     const marked = require('marked');
 
@@ -6,4 +8,7 @@ let extract : string -> (string * string) array = [%raw {|
       .filter(node => node.type == 'code')
       .map(node => [node.lang, node.text]);
   }
-|}]
+|}
+  ]:
+    string => array((string, string))
+);

@@ -1,6 +1,7 @@
 {
   "name": "checkmarked",
   "sources": ["src"],
-  "bs-dependencies": ["bs-node", "@glennsl/bs-json", "bs-glob"],
-  "bsc-flags": ["-bs-no-version-header"]
+  "bs-dependencies": ["bs-node", "@glennsl/bs-json", "reason-glob"],
+  "bsc-flags": ["-bs-no-version-header"],
+  "warnings": {"number": "-30"}
 }
